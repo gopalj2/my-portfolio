@@ -1,3 +1,4 @@
+console.log("JS FILE LOADED");
 /* ================= HEADER SCROLL BEHAVIOR ================= */
 
 let lastScrollY = window.scrollY;
@@ -207,20 +208,29 @@ document.querySelectorAll(".skill-circle").forEach((skill) => {
 
 /* ================= PORTFOLIO OBSERVER ================= */
 
-const portfolioSection = document.querySelector(".portfolio");
+/* ================= PORTFOLIO + VISUAL OBSERVER ================= */
 
-if (portfolioSection) {
+const portfolioSections = document.querySelectorAll(
+  ".portfolio, .visual-portfolio"
+);
+
+if (portfolioSections.length) {
   const portfolioObserver = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        portfolioSection.classList.add("active");
-      }
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("active");
+        }
+      });
     },
     { threshold: 0.3 }
   );
 
-  portfolioObserver.observe(portfolioSection);
+  portfolioSections.forEach((section) => {
+    portfolioObserver.observe(section);
+  });
 }
+
 
 // ===== ABOUT SVG VISIBILITY =====
 
@@ -240,3 +250,127 @@ if (aboutSection && aboutSVG) {
 
   aboutObserver.observe(aboutSection);
 }
+/* ================= PORTFOLIO FILTER LOGIC ================= */
+
+const portfolioSectionEl = document.querySelector(".portfolio");
+const filterButtons = portfolioSectionEl
+  ? portfolioSectionEl.querySelectorAll(".portfolio-filters button")
+  : [];
+
+const portfolioCards = portfolioSectionEl
+  ? portfolioSectionEl.querySelectorAll(".portfolio-card")
+  : [];
+
+
+filterButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    // active button
+    filterButtons.forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
+
+    const filter = button.getAttribute("data-filter");
+
+    portfolioCards.forEach(card => {
+      const categories = card.getAttribute("data-category");
+
+      if (filter === "all" || categories.includes(filter)) {
+  card.style.display = "block";
+
+  // trigger animation
+  setTimeout(() => {
+    card.classList.remove("is-hidden");
+    card.classList.add("is-visible");
+  }, 10);
+
+} else {
+  card.classList.remove("is-visible");
+  card.classList.add("is-hidden");
+
+  setTimeout(() => {
+    card.style.display = "none";
+  }, 300);
+}
+
+
+    });
+  });
+});
+/* ================= VISUAL PORTFOLIO FILTER LOGIC ================= */
+
+const visualSection = document.querySelector(".visual-portfolio");
+
+if (visualSection) {
+  const visualFilterButtons =
+    visualSection.querySelectorAll(".portfolio-filters button");
+  const visualCards =
+    visualSection.querySelectorAll(".visual-card");
+
+  visualFilterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      // active button
+      visualFilterButtons.forEach((btn) =>
+        btn.classList.remove("active")
+      );
+      button.classList.add("active");
+
+      const filter = button.textContent.toLowerCase();
+
+      visualCards.forEach((card) => {
+        const category = card.dataset.category;
+
+        if (filter === "all" || category === filter) {
+          card.style.display = "block";
+          setTimeout(() => {
+            card.style.opacity = "1";
+            card.style.transform = "scale(1)";
+          }, 10);
+        } else {
+          card.style.opacity = "0";
+          card.style.transform = "scale(0.92)";
+          setTimeout(() => {
+            card.style.display = "none";
+          }, 300);
+        }
+      });
+    });
+  });
+}
+// ================= VISUAL POPUP LOGIC =================
+document.addEventListener("DOMContentLoaded", () => {
+  const popup = document.getElementById("visualPopup");
+  const popupImg = document.getElementById("visualPopupImg");
+  const popupTitle = document.getElementById("visualPopupTitle");
+  const popupDesc = document.getElementById("visualPopupDesc");
+  const popupClose = document.querySelector(".visual-popup-close");
+  const popupOverlay = document.querySelector(".visual-popup-overlay");
+
+  if (!popup) return; // safety guard
+
+  document.querySelectorAll(".visual-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const img = card.querySelector("img");
+      const title = card.querySelector("h3");
+      const desc = card.querySelector("p");
+
+      popupImg.src = img.src;
+      popupTitle.textContent = title.textContent;
+      popupDesc.textContent = desc.textContent;
+
+popup.classList.add("show");
+document.body.style.overflow = "hidden";
+    });
+  });
+
+  function closePopup() {
+  popup.classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+  popupClose.addEventListener("click", closePopup);
+  popupOverlay.addEventListener("click", closePopup);
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && popup.classList.contains("show")) {
+    closePopup();
+  }
+});
