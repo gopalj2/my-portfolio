@@ -189,8 +189,8 @@ body {
 }
 
 .image-circle img {
-  width: 85%;
-  height: auto;
+  width: 100%;
+  height: auto90;
   max-width: none;
   object-fit: cover;
 }
@@ -533,18 +533,19 @@ body {
   border-radius: 16px;
 }
 
-
-.portfolio-card:hover {
-  transform: translateY(-6px);
+/* image wrapper – clips image only */
+.portfolio-image {
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
 }
 
 .portfolio-card img {
   width: 100%;
   height: 220px;
   object-fit: cover;
-  border-radius: 14px 14px 0 0;
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 
 
 .portfolio-info {
@@ -563,9 +564,12 @@ body {
 
 /* view all */
 .portfolio-viewall {
-  margin-top: 40px;
-  text-align: center;
+  width: 100%;
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
 }
+
 
 .portfolio-viewall a {
   display: inline-block;
@@ -622,14 +626,15 @@ body {
 /* Cards initial state */
 .portfolio-card {
   opacity: 0;
-  transform: scale(0.85);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(40px) scale(0.95);
+  transition:
+    opacity 0.6s ease,
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 /* Cards when visible */
 .portfolio.active .portfolio-card {
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(0) scale(1);
 }
 
 /* Stagger effect */
@@ -642,13 +647,17 @@ body {
 
 /* ================= PORTFOLIO HOVER EFFECT ================= */
 
-.portfolio-card {
-  position: relative;
-  border-radius: 16px;
-  background: #141414;
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-              box-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+.portfolio-card:hover {
+  transform: translateY(-22px) scale(1.01);
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.45),
+    0 0 40px rgba(255, 122, 0, 0.15);
 }
+
+.portfolio-card:hover .portfolio-image img {
+  transform: scale(1.08);
+}
+
 
 
 /* glowing border */
@@ -688,6 +697,37 @@ body {
 .portfolio-card:hover img {
   transform: scale(1.08);
 }
+
+
+/* ================= PORTFOLIO FILTER TRANSITION ================= */
+
+.portfolio-card {
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* hidden state */
+.portfolio-card.is-hidden {
+  opacity: 0;
+  transform: scale(0.92);
+  pointer-events: none;
+}
+
+/* visible state */
+.portfolio-card.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ================= VISUAL PORTFOLIO SCROLL VISIBILITY ================= */
+
+.visual-portfolio .portfolio-title,
+.visual-portfolio .portfolio-filters {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 /* ================= CONTACT ================= */
 
@@ -1282,5 +1322,185 @@ p {
 .about-cta:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(255, 122, 0, 0.25);
+}
+/* ================= PORTFOLIO FILTER SMOOTH APPEAR ================= */
+
+.portfolio-card {
+  will-change: transform, opacity;
+}
+
+@keyframes portfolioFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* when card comes back after filter */
+.portfolio-card {
+  animation: portfolioFadeIn 0.35s ease both;
+}
+/* ================= VISUAL IDENTITY CARDS ================= */
+
+.visual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.visual-card {
+  background: #141414;
+  border-radius: 16px;
+  padding: 0px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.visual-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.visual-card img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.visual-card h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.visual-card p {
+  font-size: 12px;
+  color: #bfbfbf;
+}
+
+/* ================= VISUAL CARD HOVER EFFECT ================= */
+
+.visual-card {
+  position: relative;
+  border-radius: 16px;
+  background: #141414;
+  transition:
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* glowing border */
+.visual-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 122, 0, 0.75);
+  opacity: 0;
+  box-shadow:
+    0 0 0 rgba(255, 122, 0, 0),
+    0 20px 50px rgba(255, 122, 0, 0.35);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+/* hover motion */
+.visual-card:hover {
+  transform: translateY(-18px) scale(1.01);
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.45),
+    0 0 40px rgba(255, 122, 0, 0.15);
+}
+
+/* show glow */
+.visual-card:hover::before {
+  opacity: 1;
+}
+
+/* image zoom */
+.visual-card img {
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.visual-card:hover img {
+  transform: scale(1.08);
+}
+/* ================= VISUAL FILTER ANIMATION ================= */
+
+.visual-card {
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* ================= VISUAL POPUP ================= */
+.visual-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+}
+
+.visual-popup.show {
+  display: block;
+}
+
+.visual-popup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+}
+
+.visual-popup-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: #111;
+  border-radius: 16px;
+  max-width: 900px;
+  width: 90%;
+  padding: 20px;
+  opacity: 0;
+  transition: all 0.35s ease;
+}
+
+.visual-popup.show .visual-popup-content {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.visual-popup-content img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.visual-popup-text h3 {
+  margin-bottom: 6px;
+}
+
+.visual-popup-text p {
+  color: #bbb;
+  font-size: 14px;
+}
+
+.visual-popup-close {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #d16309;
+  border: none;
+  font-size: 22px;
+  line-height: 40px;
+  text-align: center;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
