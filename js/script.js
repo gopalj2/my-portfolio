@@ -126,36 +126,50 @@ cards.forEach((card, i) => {
     });
   });
 }
-// ===== ABOUT BASIC LOGIC =====
+/// ===== ABOUT SECTION LOGIC (HOME + ABOUT PAGE SAFE) =====
 
 const about = document.querySelector(".about");
 const aboutTitle = document.getElementById("about-title");
-const aboutText = document.querySelector(".about-text");
 
-const title = "About Me";
-let i = 0;
-let started = false;
+if (about && aboutTitle) {
+  const titleText = "About Me";
+  let index = 0;
+  let typed = false;
 
-function typeTitle() {
-  if (i < title.length) {
-    aboutTitle.textContent += title.charAt(i);
-    i++;
-    setTimeout(typeTitle, 90);
-  } else {
-    about.classList.add("show-text");
+  function typeTitle() {
+    if (index < titleText.length) {
+      aboutTitle.textContent += titleText.charAt(index);
+      index++;
+      setTimeout(typeTitle, 90);
+    } else {
+      about.classList.add("show-text");
+    }
   }
+
+  function activateAbout() {
+    if (typed) return;
+    typed = true;
+    about.classList.add("active");
+    setTimeout(typeTitle, 300);
+  }
+
+  // 👉 ABOUT PAGE: activate immediately
+  if (document.body.classList.contains("about-page")) {
+    activateAbout();
+  }
+
+  // 👉 HOME PAGE: activate on scroll
+  window.addEventListener("scroll", () => {
+    const rect = about.getBoundingClientRect();
+    const vh = window.innerHeight;
+
+    if (rect.top < vh * 0.7) {
+      activateAbout();
+    }
+  });
 }
 
-window.addEventListener("scroll", () => {
-  const rect = about.getBoundingClientRect();
-  const vh = window.innerHeight;
 
-  if (rect.top < vh * 0.7 && !started) {
-    about.classList.add("active");
-    started = true;
-    setTimeout(typeTitle, 400);
-  }
-});
 // ===== SKILLS VISIBILITY =====
 
 const skillCircles = document.querySelectorAll(".skill-circle");
@@ -374,3 +388,79 @@ document.addEventListener("keydown", (e) => {
     closePopup();
   }
 });
+/* ================= CONTACT SCROLL ================= */
+
+const contactSection = document.querySelector(".contact");
+
+if (contactSection) {
+  const contactObserver = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        contactSection.classList.add("active");
+      }
+    },
+    { threshold: 0.3 }
+  );
+
+  contactObserver.observe(contactSection);
+}
+/* ================= HEADER ACTIVE SECTION ================= */
+
+const sections = document.querySelectorAll("section[id]");
+const navLinks = document.querySelectorAll(".nav-link");
+
+function setActiveLink() {
+  let currentSection = "";
+
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120; // header offset
+    const sectionHeight = section.offsetHeight;
+
+    if (
+      window.scrollY >= sectionTop &&
+      window.scrollY < sectionTop + sectionHeight
+    ) {
+      currentSection = section.getAttribute("id");
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove("active");
+
+    if (link.getAttribute("href") === `#${currentSection}`) {
+      link.classList.add("active");
+    }
+  });
+}
+
+window.addEventListener("scroll", setActiveLink);
+/* ================= MOBILE MENU TOGGLE ================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.getElementById("menuToggle");
+  const mobileNav = document.getElementById("mobileNav");
+
+  if (!menuToggle || !mobileNav) {
+    console.warn("Menu toggle or mobile nav not found");
+    return;
+  }
+
+  menuToggle.addEventListener("click", () => {
+    mobileNav.classList.toggle("open");
+  });
+});
+
+// ===== CLOSE MOBILE MENU ON LINK CLICK (MOBILE ONLY) =====
+
+const mobileLinks = document.querySelectorAll("#mobileNav a");
+
+mobileLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    // run ONLY on mobile screens
+    if (window.innerWidth <= 768) {
+      mobileNav.classList.remove("open");
+    }
+  });
+});
+
+
